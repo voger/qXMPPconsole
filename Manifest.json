@@ -1,36 +1,43 @@
 {
- "$schema": "https://qooxdoo.org/schema/Manifest-1-0-0.json",
-  "info" :
-  {
-    "name" : "qMPPconsole",
+  "$schema": "https://qooxdoo.org/schema/Manifest-1-0-0.json",
+  "info": {
+    "name": "qMPPconsole",
 
-    "summary" : "Debugging console for XMPP",
-    "description" : "",
+    "summary": "Debugging console for XMPP",
+    "description": "",
 
-    "homepage" : "",
+    "homepage": "",
 
-    "license" : "MIT license",
-    "authors" : [
-  {
-    "name": "",
-    "email": "voger"
-  }
-],
+    "license": "MIT license",
+    "authors": [
+      {
+        "name": "",
+        "email": "voger"
+      }
+    ],
 
-    "version" : "0.0.1"
+    "version": "0.0.1"
   },
 
-  "provides" :
-  {
-    "namespace"   : "qmc",
-    "encoding"    : "utf-8",
-    "class"       : "source/class",
-    "resource"    : "source/resource",
-    "translation" : "source/translation"
+  "provides": {
+    "namespace": "qmc",
+    "encoding": "utf-8",
+    "class": "source/class",
+    "resource": "source/resource",
+    "translation": "source/translation"
   },
 
   "requires": {
     "@qooxdoo/framework": "^6.0.0",
-    "@qooxdoo/compiler" : "^1.0.0"
+    "@qooxdoo/compiler": "^1.0.0"
+  },
+
+  "externalResources": {
+    "script": [
+      "qmc/ace/ace.js",
+      "qmc/ace/mode-xml.js",
+      "qmc/ace/theme-xcode.js",
+      "qmc/ace/worker-xml.js"
+    ]
   }
 }
