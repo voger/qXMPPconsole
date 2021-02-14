@@ -1,3 +1,7 @@
+/**
+ * @ignore(ace.edit)
+ *
+ */
 qx.Class.define("qmc.views.Stream", {
   extend: qx.ui.core.Widget,
 
