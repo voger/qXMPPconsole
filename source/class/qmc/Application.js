@@ -46,6 +46,10 @@ qx.Class.define("qmc.Application", {
         Below is your actual application code...
       -------------------------------------------------------------------------
       */
+
+      // patch the qx.ui.toolbar.Part to respect flex
+      qx.Class.patch(qx.ui.toolbar.Part, qmc.patch.MFixPartFlex);
+
       // Document is the application root
       const doc = this.getRoot();
       const mainContainer = new qmc.MainContainer();
