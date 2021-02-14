@@ -12,6 +12,7 @@ qx.Class.define("qmc.views.Stream", {
 
   members: {
     __ace: null,
+    __editor: null,
 
     _onAppear() {
       const container = this.getContentElement().getDomElement();
@@ -27,9 +28,10 @@ qx.Class.define("qmc.views.Stream", {
       session.setTabSize(2);
       session.setValue("");
 
+      // prettier-ignore
       this.addListener("resize", () => {
         // use a timeout to let the layout queue apply its changes to the dom
-        qx.event.Timer.once( () => {
+        qx.event.Timer.once(() => {
             this.__ace.resize();
           }, null, 500);
       });

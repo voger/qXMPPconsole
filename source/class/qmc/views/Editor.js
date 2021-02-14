@@ -8,13 +8,28 @@ qx.Class.define("qmc.views.Editor", {
   construct() {
     this.base(arguments);
     this.addListenerOnce("appear", this._onAppear, this);
+
+    this._setLayout(new qx.ui.layout.VBox());
+    const toolbar = new qx.ui.toolbar.ToolBar();
+    toolbar.setSpacing(2);
+
+    const sendBtn = new qx.ui.toolbar.Button(this.tr("Send"));
+    toolbar.add(sendBtn);
+
+    const sendSelBtn = new qx.ui.toolbar.Button(this.tr("Send Selected"));
+    toolbar.add(sendSelBtn);
+
+    this._add(toolbar);
+    this.__editor = new qx.ui.core.Widget();
+    this._add(this.__editor);
   },
 
   members: {
     __ace: null,
+    __editor: null,
 
     _onAppear() {
-      const container = this.getContentElement().getDomElement();
+      const container = this.__editor.getContentElement().getDomElement();
       const editor = (this.__ace = ace.edit(container));
 
       // consfigure the editor
@@ -26,11 +41,12 @@ qx.Class.define("qmc.views.Editor", {
       session.setTabSize(2);
       session.setValue("");
 
-      this.addListener("resize", () => {
+      // prettier-ignore
+      this.__editor.addListener("resize", () => {
         // use a timeout to let the layout queue apply its changes to the dom
-        qx.event.Timer.once(() => {
+        qx.event.Timer.once(() => { 
           this.__ace.resize();
-        }, null, 500);
+          }, null, 500);
       });
     },
 
