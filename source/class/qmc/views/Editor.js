@@ -14,6 +14,7 @@ qx.Class.define("qmc.views.Editor", {
     toolbar.setSpacing(2);
 
     const sendBtn = new qx.ui.toolbar.Button(this.tr("Send"));
+    sendBtn.addListener("execute", this._onSend, this);
     toolbar.add(sendBtn);
 
     const sendSelBtn = new qx.ui.toolbar.Button(this.tr("Send Selected"));
@@ -50,8 +51,14 @@ qx.Class.define("qmc.views.Editor", {
       });
     },
 
+    _onSend() {
+      const stanza = this.getStanza();
+      const elem = qx.xml.Document.fromString(stanza);
+      console.log(elem);
+    },
+
     getStanza() {
-      return this.__ace.getSession.getValue();
+      return this.__ace.getSession().getValue();
     }
   }
 });

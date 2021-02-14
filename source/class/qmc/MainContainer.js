@@ -10,6 +10,7 @@ qx.Class.define("qmc.MainContainer", {
     this._add(toolbar);
 
     const mainView = new qmc.views.MainView();
+
     this._add(mainView, {flex: 1});
   }
 });

@@ -3,6 +3,8 @@ qx.Class.define("qmc.views.MainView", {
 
   construct(orientation = "horizontal") {
     this.base(arguments, orientation);
+    this.__service = qmc.Service.getInstance();
+
     this.__createEditorPane();
     this._addHistory();
     this._addEditor();
@@ -11,6 +13,24 @@ qx.Class.define("qmc.views.MainView", {
 
   members: {
     __editorPane: null,
+    __editor: null,
+
+    __stream: null,
+    __streamController: null,
+
+    __service: null,
+
+    getEditor() {
+      return this.__editor;
+    },
+
+    getStream() {
+      return this.__stream;
+    },
+
+    getHistory() {
+      return this.__history;
+    },
 
     __createEditorPane() {
       this.__editorPane = new qx.ui.splitpane.Pane("vertical");
@@ -18,21 +38,23 @@ qx.Class.define("qmc.views.MainView", {
     },
 
     _addEditor() {
-      const editor = new qmc.views.Editor();
-      editor.setMinHeight(200);
-      this.__editorPane.add(editor, 0);
+      this.__editor = new qmc.views.Editor().set({
+        minHeight: 200
+      });
+      this.__editorPane.add(this.__editor, 0);
     },
 
     _addHistory() {
-      const history = new qx.ui.core.Widget().set({
+      this.__history = new qx.ui.core.Widget().set({
         maxWidth: 200
       });
-      this.__editorPane.add(history, 1);
+      this.__editorPane.add(this.__history, 1);
     },
 
     _addStream() {
-      const stream = new qmc.views.Stream();
-      this.add(stream, 1);
+      this.__stream = new qmc.views.Stream();
+      this.__streamController = new qmc.controllers.Stream(this.__stream, this.__service);
+      this.add(this.__stream, 1);
     }
   }
 });

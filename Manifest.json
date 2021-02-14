@@ -37,7 +37,9 @@
       "qmc/ace/ace.js",
       "qmc/ace/mode-xml.js",
       "qmc/ace/theme-xcode.js",
-      "qmc/ace/worker-xml.js"
+      "qmc/xml-formatter.js",
+      "qmc/ace/worker-xml.js",
+      "qmc/strophe/strophe.umd.js"
     ]
   }
 }

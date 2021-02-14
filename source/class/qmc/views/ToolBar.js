@@ -27,9 +27,9 @@ qx.Class.define("qmc.views.ToolBar", {
     address.setAllowGrowX(true);
     part2.add(address, {flex: 3});
 
-
     const connect = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
     connect.setAppearance("main-toolbar-button");
+    connect.addListener("execute", this._onConnect, this);
     part2.add(connect);
 
     const disconnect = (this.__disconnectBtn = new qx.ui.form.Button(this.tr("Disconnect")));
@@ -44,6 +44,21 @@ qx.Class.define("qmc.views.ToolBar", {
     __password: null,
     __address: null,
     __connectBtn: null,
-    __disconnectBtn: null
+    __disconnectBtn: null,
+
+    _onConnect() {
+
+      const jid = this.__jid.getValue();
+      const password = this.__password.getValue();
+      const address = this.__address.getValue();
+
+      const service = qmc.Service.getInstance();
+      const conn = service.newConnection(address);
+
+      //prettier-ignore
+      conn.connect(jid, password, () => {
+        console.log("connected...")
+      }, this);
+    }
   }
 });

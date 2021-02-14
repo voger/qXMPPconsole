@@ -5,14 +5,18 @@
   "description": "Debugging console for XMPP",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "buildxmldep": "cd node_modules/xml-formatter && npm run-script dist:prepare && npm run-script dist:build",
+    "buildxmlformatter": "browserify -r ./node_modules/xml-formatter/index.js:xml-formatter -o ./source/resource/qmc/xml-formatter.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@qooxdoo/compiler": "^1.0.0",
     "@qooxdoo/framework": "^6.0.1",
+    "browserify": "^17.0.0",
     "eslint": "^7.20.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "xml-formatter": "^2.4.0"
   }
 }
