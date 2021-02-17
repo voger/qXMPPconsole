@@ -14,12 +14,26 @@ qx.Theme.define("qmc.theme.Font", {
     "textfield": {
       size: 20,
       family: ["sans-serif"],
-      // color: "text-primary-on-surface",
       weight: "300",
       sources: [
         {
           family: "NotoSans",
-          // fontWeight: "300",
+          source: [
+            "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff2",
+            "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff",
+            "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.ttf"
+          ]
+        }
+      ]
+    },
+
+    "font-size-button": {
+      size: 24,
+      family: ["sans-serif"],
+      bold: true,
+      sources: [
+        {
+          family: "NotoSans",
           source: [
             "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff2",
             "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff",
@@ -32,12 +46,10 @@ qx.Theme.define("qmc.theme.Font", {
     "main-toolbar-button": {
       size: 18,
       family: ["sans-serif"],
-      // color: "text-primary-on-surface",
       weight: "200",
       sources: [
         {
           family: "NotoSans",
-          // fontWeight: "300",
           source: [
             "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff2",
             "qmc/fonts/Noto_Sans/noto-sans-v11-latin-700.woff",

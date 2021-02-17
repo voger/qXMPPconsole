@@ -22,7 +22,7 @@ qx.Class.define("qmc.views.Editor", {
 
     this._add(toolbar);
     this.__editor = new qx.ui.core.Widget();
-    this._add(this.__editor);
+    this._add(this.__editor, {flex: 1});
   },
 
   members: {
