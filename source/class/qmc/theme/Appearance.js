@@ -22,10 +22,11 @@ qx.Theme.define("qmc.theme.Appearance", {
       }
     },
 
-    "textfield": {
-      base: true,
+    "connection-text-field": {
+      alias: "texfield",
+      include: "textfield",
 
-      style(states, styles) {
+      style() {
         return {
           minHeight: 40,
           font: "textfield",
@@ -58,38 +59,6 @@ qx.Theme.define("qmc.theme.Appearance", {
           minHeight: 40,
           alignY: "middle",
           font: "main-toolbar-button"
-        };
-      }
-    },
-
-    "font-size-button-increase": {
-      alias: "toolbar-button",
-      include: "toolbar-button",
-
-      style() {
-        return {
-          center: true,
-          font: "font-size-button"
-        };
-      }
-    },
-
-    "font-size-button-decrease": {
-      alias: "font-size-button-increase",
-      include: "font-size-button-increase",
-
-      style(_states, {font}) {
-        const webfont = qx.theme.manager.Font.getInstance().resolve(font);
-
-        const changedFont = new qx.bom.webfonts.WebFont().set({
-          size: webfont.getSize() - 1,
-          family: webfont.getFamily(),
-          bold: webfont.getBold(),
-          sources: webfont.getSources()
-        });
-
-        return {
-          font: changedFont
         };
       }
     }

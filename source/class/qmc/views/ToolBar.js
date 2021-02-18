@@ -11,11 +11,13 @@ qx.Class.define("qmc.views.ToolBar", {
     const part1 = new qx.ui.toolbar.Part();
     part1.setSpacing(5);
     const jid = (this.__jid = new qx.ui.form.TextField());
+    jid.setAppearance("connection-text-field")
     jid.setPlaceholder(this.tr("JID"));
     part1.add(jid);
 
     const password = (this.__password = new qx.ui.form.PasswordField());
     password.setPlaceholder(this.tr("Password"));
+    password.setAppearance("connection-text-field")
     part1.add(password);
 
     this.add(part1);
@@ -23,6 +25,7 @@ qx.Class.define("qmc.views.ToolBar", {
     const part2 = new qx.ui.toolbar.Part();
     part2.setSpacing(5);
     const address = (this.__address = new qx.ui.form.TextField());
+    address.setAppearance("connection-text-field")
     address.setPlaceholder(this.tr("Service address"));
     address.setAllowGrowX(true);
     part2.add(address, {flex: 3});

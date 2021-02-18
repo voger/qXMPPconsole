@@ -9,7 +9,7 @@ qx.Class.define("qmc.views.Stream", {
   properties: {
     fontSize: {
       check: "Integer",
-      apply: "__applyFontSize",
+      apply: "_applyFontSize",
       nullable: false,
       init: 16,
       themeable: true,
@@ -24,29 +24,15 @@ qx.Class.define("qmc.views.Stream", {
     this._setLayout(new qx.ui.layout.VBox());
     const toolbar = new qx.ui.toolbar.ToolBar();
     toolbar.setSpacing(2);
-
     const part = new qx.ui.toolbar.Part();
 
-    const fontIncreaseBtn = new qx.ui.toolbar.Button("A\u2191");
-    fontIncreaseBtn.setAppearance("font-size-button-increase");
-    // FIXME: This should go to a theme
-    fontIncreaseBtn.addListener("execute", this._increaseFont, this);
-    this.bind("fontSize", fontIncreaseBtn, "enabled", {
-      converter(val) {
-        return val <= 48;
-      }
-    });
-    part.add(fontIncreaseBtn);
+    const label = new qx.ui.basic.Label(this.tr("Font Size"));
+    part.add(label);
 
-    const fontDecreaseBtn = new qx.ui.toolbar.Button("A\u2193");
-    fontDecreaseBtn.setAppearance("font-size-button-decrease");
-    fontDecreaseBtn.addListener("execute", this._decreaseFont, this);
-    this.bind("fontSize", fontDecreaseBtn, "enabled", {
-      converter(val) {
-        return val >= 7;
-      }
-    });
-    part.add(fontDecreaseBtn);
+    const spinner = new qx.ui.form.Spinner(6, null, 48);
+    this.bind("fontSize", spinner, "value");
+    spinner.bind("value", this, "fontSize");
+    part.add(spinner);
 
     toolbar.add(part);
     this._add(toolbar);
@@ -80,18 +66,10 @@ qx.Class.define("qmc.views.Stream", {
       this.__session.insert(location, "\n\n" + logItem);
     },
 
-    __applyFontSize(val) {
-      this.__ace.setFontSize(val);
-    },
-
-    _increaseFont() {
-      const currentSize = this.getFontSize();
-      this.setFontSize(currentSize + 1);
-    },
-
-    _decreaseFont() {
-      const currentSize = this.getFontSize();
-      this.setFontSize(currentSize - 1);
+    _applyFontSize(val) {
+      if (this.__ace !== null) {
+        this.__ace.setFontSize(val);
+      }
     },
 
     _onAppear() {
@@ -102,7 +80,7 @@ qx.Class.define("qmc.views.Stream", {
       editor.setTheme("ace/theme/xcode");
       editor.setShowPrintMargin(false);
       editor.setReadOnly(true);
-      editor.setFontSize(16);
+      this._applyFontSize(this.getFontSize());
       const session = (this.__session = editor.getSession());
       session.setMode("ace/mode/xml");
 
