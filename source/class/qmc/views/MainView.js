@@ -6,30 +6,34 @@ qx.Class.define("qmc.views.MainView", {
     this.__service = qmc.Service.getInstance();
 
     this.__createEditorPane();
-    this._addHistory();
+    this._addServices();
     this._addEditor();
-    this._addStream();
+    this._addLogView();
   },
 
   members: {
     __editorPane: null,
     __editor: null,
 
-    __stream: null,
-    __streamController: null,
+    __logView: null,
+    __logController: null,
 
+    // the strophe.js service
     __service: null,
+
+    // discovered services
+    __services: null,
 
     getEditor() {
       return this.__editor;
     },
 
-    getStream() {
-      return this.__stream;
+    getLogView() {
+      return this.__logView;
     },
 
-    getHistory() {
-      return this.__history;
+    getServices() {
+      return this.__services;
     },
 
     __createEditorPane() {
@@ -44,17 +48,17 @@ qx.Class.define("qmc.views.MainView", {
       this.__editorPane.add(this.__editor, 0);
     },
 
-    _addHistory() {
-      this.__history = new qx.ui.core.Widget().set({
+    _addServices() {
+      this.__services = new qx.ui.core.Widget().set({
         maxWidth: 200
       });
-      this.__editorPane.add(this.__history, 1);
+      this.__editorPane.add(this.__services, 1);
     },
 
-    _addStream() {
-      this.__stream = new qmc.views.Stream();
-      this.__streamController = new qmc.controllers.Stream(this.__stream, this.__service);
-      this.add(this.__stream, 1);
+    _addLogView() {
+      this.__logView = new qmc.views.LogView();
+      this.__logController = new qmc.controllers.Log(this.__logView, this.__service);
+      this.add(this.__logView, 1);
     }
   }
 });

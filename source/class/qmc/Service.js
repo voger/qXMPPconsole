@@ -1,5 +1,6 @@
 /**
  * @ignore(Strophe.Connection)
+ * @ignore(Strophe.LogLevel)
  *
  */
 qx.Class.define("qmc.Service", {

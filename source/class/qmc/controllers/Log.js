@@ -1,4 +1,4 @@
-qx.Class.define("qmc.controllers.Stream", {
+qx.Class.define("qmc.controllers.Log", {
   extend: qx.core.Object,
 
   construct(view, service) {
