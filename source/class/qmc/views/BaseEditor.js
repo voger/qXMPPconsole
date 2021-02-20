@@ -1,6 +1,8 @@
 /**
  * Base editor class.
  * @ignore(ace.edit)
+ * @ignore(require)
+ * @ignore(XmlBeautify)
  *
  */
 qx.Class.define("qmc.views.BaseEditor", {
@@ -48,6 +50,9 @@ qx.Class.define("qmc.views.BaseEditor", {
   members: {
     __ace: null,
 
+    // common for all instances
+    __xmlFormat: require("xml-formatter"),
+
     _createChildControlImpl(id) {
       let control;
 
@@ -64,16 +69,33 @@ qx.Class.define("qmc.views.BaseEditor", {
       return control || this.base(arguments, id);
     },
 
+    /**
+     * Helper method to beautify XML
+     *
+     * @param text {String} The XML text to beutify
+     */
+    xmlBeautify(text, formatOpts = {}) {
+      const opts = {
+        indentation: " ",
+        collapseContent: true
+      };
+
+      qx.lang.Object.mergeWith(opts, formatOpts, true);
+      debugger;
+
+      return this.__xmlFormat(text, opts);
+    },
+
     getChildrenContainer() {
       return this.getChildControl("toolbar");
     },
 
-    _getEditor() {
+    /**
+     * Returns the used editor.
+     * @return {Object} the editor
+     */
+    getEditor() {
       return this.__ace;
-    },
-
-    _getEditorSession() {
-      return this.__ace.getSession();
     },
 
     _onAppear() {
@@ -99,6 +121,8 @@ qx.Class.define("qmc.views.BaseEditor", {
           this.__ace.resize();
           }, null, 500);
       });
+
+      this.setF;
     },
 
     _applyFontSize(val) {
