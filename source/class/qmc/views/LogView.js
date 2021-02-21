@@ -21,20 +21,50 @@ qx.Class.define("qmc.views.LogView", {
   members: {
     __dateFormat: null,
 
-    append(data, meta) {
-      const dateTime = this.__dateFormat.format(new Date(meta.timestamp));
-      const comment = `<!-- **${meta.type.toUpperCase()}** ${dateTime} -->`;
-      const logItem = this.xmlBeautify(comment + data);
-      const session = this._getEditorSession();
+    /**
+     * Append text to the end of the log
+     *
+     * @param data {String} The data to append
+     * @param meta {Object} Some metadata for the data
+     * in the form `{timestamp: timestamp, type: type}`
+     * @param emptyLine {Boolean} If there should be an
+     * empty line before the appended data. Default `true`
+     */
+    append(data, meta, emptyLine = true) {
+      const logItem = this.formatStanza(data, meta);
+
       // https://stackoverflow.com/a/30222966/2604378
       const location = {
-        row: session.getLength(),
+        row: this.getLength(),
         column: 0
       };
 
       // if we are writting to the first line, don't add any new lines
-      const newLine = location.row > 1 ? "\n\n" : "";
-      session.insert(location, newLine + logItem);
+      if (location.row > 1) {
+        this.insert("\n", location);
+        location.row++;
+
+        if (emptyLine) {
+          this.insert("\n", location);
+          location.row++;
+        }
+      }
+
+      this.insert(logItem, location);
+    },
+
+    /**
+     * Formats the XML stanza. It also adds a comment
+     * above it to identify the type and the time
+     *
+     * @param data {String} The data to append
+     * @param meta {Object} Some metadata for the data
+     * @return {String} The formated stanza
+     */
+    formatStanza(data, meta) {
+      const dateTime = this.__dateFormat.format(new Date(meta.timestamp));
+      const comment = `<!-- **${meta.type.toUpperCase()}** ${dateTime} -->`;
+      return this.xmlBeautify(comment + data);
     }
   }
 });

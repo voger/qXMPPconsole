@@ -81,7 +81,6 @@ qx.Class.define("qmc.views.BaseEditor", {
       };
 
       qx.lang.Object.mergeWith(opts, formatOpts, true);
-      debugger;
 
       return this.__xmlFormat(text, opts);
     },
@@ -96,6 +95,22 @@ qx.Class.define("qmc.views.BaseEditor", {
      */
     getEditor() {
       return this.__ace;
+    },
+
+    /**
+     * Insert text at position
+     *
+     * @param text {String} The text to be inserted
+     * @param position {Object} An object describing the position
+     * where to enter the text. Default `{row: 1, column: 0}`
+     */
+    insert(text, position = {row: 1, column: 0}) {
+      const session = this.getEditor().getSession();
+      session.insert(position, text);
+    },
+
+    getLength() {
+      return this.getEditor().getSession().getLength();
     },
 
     _onAppear() {
