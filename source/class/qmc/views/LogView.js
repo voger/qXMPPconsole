@@ -34,19 +34,17 @@ qx.Class.define("qmc.views.LogView", {
       const logItem = this.formatStanza(data, meta);
 
       // https://stackoverflow.com/a/30222966/2604378
-      const location = {
+      let location = {
         row: this.getLength(),
         column: 0
       };
 
       // if we are writting to the first line, don't add any new lines
       if (location.row > 1) {
-        this.insert("\n", location);
-        location.row++;
+        location = this.insertNewLine(location);
 
         if (emptyLine) {
-          this.insert("\n", location);
-          location.row++;
+          location = this.insertNewLine(location);
         }
       }
 

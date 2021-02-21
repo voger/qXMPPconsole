@@ -109,6 +109,11 @@ qx.Class.define("qmc.views.BaseEditor", {
       session.insert(position, text);
     },
 
+    insertNewLine(position) {
+      const doc = this.getEditor().getSession().getDocument();
+      return doc.insertMergedLines(position, ["", ""]);
+    },
+
     getLength() {
       return this.getEditor().getSession().getLength();
     },
@@ -125,7 +130,7 @@ qx.Class.define("qmc.views.BaseEditor", {
       session.setMode("ace/mode/xml");
       session.setUseSoftTabs(true);
       session.setTabSize(2);
-      session.setValue("");
+      // session.setValue("");
       this._applyFontSize(this.getFontSize());
       this._applyReadOnly(this.getReadOnly());
 
