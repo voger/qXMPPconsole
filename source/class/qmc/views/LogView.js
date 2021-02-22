@@ -31,7 +31,16 @@ qx.Class.define("qmc.views.LogView", {
      * empty line before the appended data. Default `true`
      */
     append(data, meta, emptyLine = true) {
-      const logItem = this.formatStanza(data, meta);
+      const dateTime = this.__dateFormat.format(new Date(meta.timestamp));
+      const comment = `<!-- **${meta.type.toUpperCase()}** ${dateTime} -->`;
+
+      let logItem;
+
+      if (meta.type === "log") {
+        logItem = comment + "\n" + data;
+      } else {
+        logItem = this.formatStanza(comment + data);
+      }
 
       // https://stackoverflow.com/a/30222966/2604378
       let location = {
@@ -59,10 +68,8 @@ qx.Class.define("qmc.views.LogView", {
      * @param meta {Object} Some metadata for the data
      * @return {String} The formated stanza
      */
-    formatStanza(data, meta) {
-      const dateTime = this.__dateFormat.format(new Date(meta.timestamp));
-      const comment = `<!-- **${meta.type.toUpperCase()}** ${dateTime} -->`;
-      return this.xmlBeautify(comment + data);
+    formatStanza(data) {
+      return this.xmlBeautify(data);
     }
   }
 });

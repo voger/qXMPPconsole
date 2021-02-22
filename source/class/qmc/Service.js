@@ -67,10 +67,14 @@ qx.Class.define("qmc.Service", {
 
     connect(jid, password, callback, context) {
       if (context) {
-        callback.bind(context);
+        callback = callback.bind(context);
       }
       const conn = this.getConnection();
-      conn.send(jid, password);
+      conn.connect(jid, password, callback);
+    },
+
+    resetConnection() {
+      this.getConnection().reset();
     },
 
     /**
@@ -79,16 +83,15 @@ qx.Class.define("qmc.Service", {
      * @param server {String} The address of the server
      */
     newConnection(server) {
-      const oldConnection = this.__connection;
       const newConnection = (this.__connection = new Strophe.Connection(server));
 
       newConnection.xmlInput = this._xmlInput.bind(this);
       newConnection.xmlOutput = this._xmlOutput.bind(this);
       newConnection.rawInput = this._rawInput.bind(this);
       newConnection.rawOutput = this._rawOutput.bind(this);
-      newConnection.log = this._log.bind(this);
+      Strophe.log = this._log.bind(this);
 
-      this.fireDataEvent("newConnection", newConnection, oldConnection);
+      this.fireDataEvent("newConnection", newConnection);
       return newConnection;
     },
 
@@ -109,14 +112,9 @@ qx.Class.define("qmc.Service", {
     },
 
     _log(level, data) {
-      const dataObj = {
-        data: data,
-        timestamp: qx.lang.normalize.Date.now(),
-        level: level,
-        levelString: Object.getKeyFromValue(Strophe.LogLevel, level)
-      };
+      const levelString = qx.lang.Object.getKeyFromValue(Strophe.LogLevel, level);
 
-      this.fireDataEvent("log", dataObj);
+      this.fireDataEvent("log", `${levelString}: ${data}`);
     },
 
     /**

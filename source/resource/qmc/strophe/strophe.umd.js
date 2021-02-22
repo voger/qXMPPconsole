@@ -2647,7 +2647,8 @@
 
 
                   this.do_session = false;
-                  this.do_bind = false; // handler lists
+                  this.do_bind = false;
+                  this.mechanisms["SCRAM-SHA-1"].reset(); // handler lists
 
                   this.timedHandlers = [];
                   this.handlers = [];
@@ -4685,13 +4686,19 @@
                *  SASL SCRAM SHA 1 authentication.
                */
               function SASLSHA1() {
+                var _this11;
+
                 var mechname = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'SCRAM-SHA-1';
                 var isClientFirst = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
                 var priority = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 60;
 
                 _classCallCheck(this, SASLSHA1);
 
-                return _super3.call(this, mechname, isClientFirst, priority);
+                _this11 = _super3.call(this, mechname, isClientFirst, priority);
+
+                _this11.reset();
+
+                return _this11;
               }
 
               _createClass(SASLSHA1, [{
@@ -4701,79 +4708,83 @@
                   return connection.authcid !== null;
                 }
               }, {
-                key: "onChallenge",
-                value: function onChallenge(connection, challenge, test_cnonce) {
-                  var cnonce = test_cnonce || MD5.hexdigest("" + Math.random() * 1234567890);
-                  var auth_str = "n=" + utils.utf16to8(connection.authcid);
-                  auth_str += ",r=";
-                  auth_str += cnonce;
-                  connection._sasl_data.cnonce = cnonce;
-                  connection._sasl_data["client-first-message-bare"] = auth_str;
-                  auth_str = "n,," + auth_str;
+                key: "reset",
+                value: function reset() {
+                  var _this12 = this;
 
-                  this.onChallenge = function (connection, challenge) {
-                    var nonce, salt, iter, Hi, U, U_old, i, k;
-                    var responseText = "c=biws,";
-                    var authMessage = "".concat(connection._sasl_data["client-first-message-bare"], ",").concat(challenge, ",");
-                    var cnonce = connection._sasl_data.cnonce;
-                    var attribMatch = /([a-z]+)=([^,]+)(,|$)/;
+                  this.onChallenge = function (connection, challenge, test_cnonce) {
+                    var cnonce = test_cnonce || MD5.hexdigest("" + Math.random() * 1234567890);
+                    var auth_str = "n=" + utils.utf16to8(connection.authcid);
+                    auth_str += ",r=";
+                    auth_str += cnonce;
+                    connection._sasl_data.cnonce = cnonce;
+                    connection._sasl_data["client-first-message-bare"] = auth_str;
+                    auth_str = "n,," + auth_str;
 
-                    while (challenge.match(attribMatch)) {
-                      var matches = challenge.match(attribMatch);
-                      challenge = challenge.replace(matches[0], "");
+                    _this12.onChallenge = function (connection, challenge) {
+                      var nonce, salt, iter, Hi, U, U_old, i, k;
+                      var responseText = "c=biws,";
+                      var authMessage = "".concat(connection._sasl_data["client-first-message-bare"], ",").concat(challenge, ",");
+                      var cnonce = connection._sasl_data.cnonce;
+                      var attribMatch = /([a-z]+)=([^,]+)(,|$)/;
 
-                      switch (matches[1]) {
-                        case "r":
-                          nonce = matches[2];
-                          break;
+                      while (challenge.match(attribMatch)) {
+                        var matches = challenge.match(attribMatch);
+                        challenge = challenge.replace(matches[0], "");
 
-                        case "s":
-                          salt = matches[2];
-                          break;
+                        switch (matches[1]) {
+                          case "r":
+                            nonce = matches[2];
+                            break;
 
-                        case "i":
-                          iter = matches[2];
-                          break;
+                          case "s":
+                            salt = matches[2];
+                            break;
+
+                          case "i":
+                            iter = matches[2];
+                            break;
+                        }
                       }
-                    }
 
-                    if (nonce.substr(0, cnonce.length) !== cnonce) {
-                      connection._sasl_data = {};
-                      return connection._sasl_failure_cb();
-                    }
+                      if (nonce.substr(0, cnonce.length) !== cnonce) {
+                        connection._sasl_data = {};
+                        return connection._sasl_failure_cb();
+                      }
 
-                    responseText += "r=" + nonce;
-                    authMessage += responseText;
-                    salt = abab.atob(salt);
-                    salt += "\x00\x00\x00\x01";
-                    var pass = utils.utf16to8(connection.pass);
-                    Hi = U_old = SHA1.core_hmac_sha1(pass, salt);
+                      responseText += "r=" + nonce;
+                      authMessage += responseText;
+                      salt = abab.atob(salt);
+                      salt += "\x00\x00\x00\x01";
+                      var pass = utils.utf16to8(connection.pass);
+                      Hi = U_old = SHA1.core_hmac_sha1(pass, salt);
 
-                    for (i = 1; i < iter; i++) {
-                      U = SHA1.core_hmac_sha1(pass, SHA1.binb2str(U_old));
+                      for (i = 1; i < iter; i++) {
+                        U = SHA1.core_hmac_sha1(pass, SHA1.binb2str(U_old));
+
+                        for (k = 0; k < 5; k++) {
+                          Hi[k] ^= U[k];
+                        }
+
+                        U_old = U;
+                      }
+
+                      Hi = SHA1.binb2str(Hi);
+                      var clientKey = SHA1.core_hmac_sha1(Hi, "Client Key");
+                      var serverKey = SHA1.str_hmac_sha1(Hi, "Server Key");
+                      var clientSignature = SHA1.core_hmac_sha1(SHA1.str_sha1(SHA1.binb2str(clientKey)), authMessage);
+                      connection._sasl_data["server-signature"] = SHA1.b64_hmac_sha1(serverKey, authMessage);
 
                       for (k = 0; k < 5; k++) {
-                        Hi[k] ^= U[k];
+                        clientKey[k] ^= clientSignature[k];
                       }
 
-                      U_old = U;
-                    }
+                      responseText += ",p=" + abab.btoa(SHA1.binb2str(clientKey));
+                      return responseText;
+                    };
 
-                    Hi = SHA1.binb2str(Hi);
-                    var clientKey = SHA1.core_hmac_sha1(Hi, "Client Key");
-                    var serverKey = SHA1.str_hmac_sha1(Hi, "Server Key");
-                    var clientSignature = SHA1.core_hmac_sha1(SHA1.str_sha1(SHA1.binb2str(clientKey)), authMessage);
-                    connection._sasl_data["server-signature"] = SHA1.b64_hmac_sha1(serverKey, authMessage);
-
-                    for (k = 0; k < 5; k++) {
-                      clientKey[k] ^= clientSignature[k];
-                    }
-
-                    responseText += ",p=" + abab.btoa(SHA1.binb2str(clientKey));
-                    return responseText;
+                    return auth_str;
                   };
-
-                  return auth_str;
                 }
               }]);
 

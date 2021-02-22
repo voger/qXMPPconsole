@@ -7,6 +7,7 @@ qx.Class.define("qmc.controllers.Log", {
 
     service.addListener("rawInput", this.updateView, this);
     service.addListener("rawOutput", this.updateView, this);
+    service.addListener("log", this.updateView, this);
   },
 
   members: {

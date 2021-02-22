@@ -38,8 +38,13 @@ qx.Class.define("qmc.views.Editor", {
       const stanza = this.getCurrentStanza();
       // FIXME: If XML comments are invalid, this is
       //       the place to remove them.
-      const elem = qx.xml.Document.fromString(stanza);
-      console.log(elem);
+      // const elem = qx.xml.Document.fromString(stanza);
+
+      const parser = new DOMParser();
+      const elem = parser.parseFromString(stanza, "application/xml").documentElement;
+
+      const service = qmc.Service.getInstance();
+      service.send(elem);
     },
 
     // override

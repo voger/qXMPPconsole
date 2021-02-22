@@ -11,13 +11,17 @@ qx.Class.define("qmc.views.ToolBar", {
     const part1 = new qx.ui.toolbar.Part();
     part1.setSpacing(5);
     const jid = (this.__jid = new qx.ui.form.TextField());
-    jid.setAppearance("connection-text-field")
+    jid.setAppearance("connection-text-field");
     jid.setPlaceholder(this.tr("JID"));
+    // FIXME: remove next line
+    jid.setValue("qqq@localhost");
     part1.add(jid);
 
     const password = (this.__password = new qx.ui.form.PasswordField());
     password.setPlaceholder(this.tr("Password"));
-    password.setAppearance("connection-text-field")
+    password.setAppearance("connection-text-field");
+    // FIXME: remove next line
+    password.setValue("qqq");
     part1.add(password);
 
     this.add(part1);
@@ -25,9 +29,12 @@ qx.Class.define("qmc.views.ToolBar", {
     const part2 = new qx.ui.toolbar.Part();
     part2.setSpacing(5);
     const address = (this.__address = new qx.ui.form.TextField());
-    address.setAppearance("connection-text-field")
+    address.setAppearance("connection-text-field");
     address.setPlaceholder(this.tr("Service address"));
     address.setAllowGrowX(true);
+
+    // FIXME: remove next line
+    address.setValue("ws://localhost:5443/ws");
     part2.add(address, {flex: 3});
 
     const connect = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
@@ -50,18 +57,64 @@ qx.Class.define("qmc.views.ToolBar", {
     __disconnectBtn: null,
 
     _onConnect() {
-
       const jid = this.__jid.getValue();
       const password = this.__password.getValue();
       const address = this.__address.getValue();
 
       const service = qmc.Service.getInstance();
-      const conn = service.newConnection(address);
+      service.newConnection(address);
 
       //prettier-ignore
-      conn.connect(jid, password, () => {
-        console.log("connected...")
-      }, this);
+      service.connect(jid, password, this._connectionCallback, this);
+    },
+
+    _connectionCallback(status, error) {
+      const service = qmc.Service.getInstance();
+      const conn = service.getConnection();
+      const address = conn.service;
+
+      switch (status) {
+        case Strophe.Status.CONNECTING:
+          Strophe.debug(`Connecting to ${address}.`);
+          break;
+        case Strophe.Status.CONNFAIL:
+          Strophe.error(`Connection failed to ${address}. Error status ${error}.`);
+          break;
+        case Strophe.Status.DISCONNECTING:
+          Strophe.debug(`Disconnecting from ${address}.`);
+          break;
+        case Strophe.Status.DISCONNECTED:
+          const message = `Disconnected from ${address}.`;
+          if (error) {
+            Strophe.error(message + ". " + `Error status ${error}.`);
+          } else {
+            Strophe.debug(message);
+          }
+
+          // abrupt disconnection. reconnect
+          Strophe.debug("Attempting reconnection");
+          conn.reset()
+
+          qx.event.Timer.once(service.connect(conn.authzid, conn.authcid, this._connectionCallback, this), this, 5000);
+          break;
+        case Strophe.Status.ATTACHED:
+          Strophe.debug(`Attached to ${address}.`);
+          break;
+        case Strophe.Status.REDIRECT:
+          Strophe.debug(`Redirecting to ${message}`);
+          break;
+        case Strophe.Status.CONNTIMEOUT:
+          Strophe.error(`Connection to ${address} has timed out`);
+          break;
+        case Strophe.Status.AUTHENTICATING:
+          Strophe.debug(`Authenticating to ${address}.`);
+          break;
+        case Strophe.Status.AUTHFAIL:
+          Strophe.error(`Authentication to ${address} failed with ${message}.`);
+          break;
+        case Strophe.Status.ERROR:
+          Strophe.error(`Error ${message} has occured.`);
+      }
     }
   }
 });
