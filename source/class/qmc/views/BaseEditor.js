@@ -3,6 +3,7 @@
  * @ignore(ace.edit)
  * @ignore(require)
  * @ignore(XmlBeautify)
+ * @ignore(ltx.parse)
  *
  */
 qx.Class.define("qmc.views.BaseEditor", {
@@ -83,6 +84,16 @@ qx.Class.define("qmc.views.BaseEditor", {
       qx.lang.Object.mergeWith(opts, formatOpts, true);
 
       return this.__xmlFormat(text, opts);
+    },
+
+    /**
+     * Parses a string to XML element
+     * @param string {String} the string to parse
+     * @return {Element}
+     * @throws
+     */
+    xmlParse(string) {
+      return ltx.parse(string);
     },
 
     getChildrenContainer() {

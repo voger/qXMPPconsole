@@ -36,10 +36,10 @@ qx.Class.define("qmc.views.LogView", {
 
       let logItem;
 
-      if (meta.type === "log") {
-        logItem = comment + "\n" + data;
-      } else {
+      if (["received", "send"].includes(meta.type)) {
         logItem = this.formatStanza(comment + data);
+      } else {
+        logItem = comment + "\n" + data;
       }
 
       // https://stackoverflow.com/a/30222966/2604378

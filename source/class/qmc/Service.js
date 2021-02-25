@@ -1,6 +1,4 @@
 /**
- * @ignore(Strophe.Connection)
- * @ignore(Strophe.LogLevel)
  *
  */
 qx.Class.define("qmc.Service", {
@@ -9,112 +7,98 @@ qx.Class.define("qmc.Service", {
 
   events: {
     /**
-     * Emmited whenever there is created a
-     * new connection. Payload is a strophe
-     * connection.
+     * Emmited when the client status changes.
+     * Data is a string containing the status.
      */
-    "newConnection": "qx.event.type.Data",
+    "status": "qx.event.type.Data",
 
     /**
-     * Emmited when new data is coming to the
-     * connection. Payload is the received data.
-     *
+     * Emmited when an error occurs.
+     * Data is a string containing the error.
      */
-    "rawInput": "qx.event.type.Data",
+    "error": "qx.event.type.Data",
 
     /**
-     * Emmited when new data is sent to the
-     * connection. Payload is the sent data.
-     *
+     * Emmited when the connection is online.
+     * Data is a string informing the server is
+     * online.
      */
-    "rawOutput": "qx.event.type.Data",
+    "online": "qx.event.type.Data",
 
     /**
-     * Emmited when new stanza is comming in.
-     * Payload is the stanza.
-     *
+     * Emmited when the connection is offline.
+     * Data is a string informing the server is
+     * offline.
      */
-    "xmlInput": "qx.event.type.Data",
+    "offline": "qx.event.type.Data",
 
     /**
-     * Emmited when new stanza is sent out.
-     * Payload is the stanza.
-     *
+     * Emmited when the connection is reconnecting
+     * after a diconnect.
      */
-    "xmlOutput": "qx.event.type.Data",
+    "reconnecting": "qx.event.type.Event",
 
     /**
-     * Emmited when new a new log entry is available.
-     * Payload is an object containing the log level both
-     * in Strophe.LogLevel enum value and String, the message,
-     * and a local timestamp.
-     *
+     * Emmited when the connection is reconnected
+     * after a diconnect.
      */
-    "log": "qx.event.type.Data"
+    "reconnected": "qx.event.type.Event",
+
+    /**
+     * Emmited then a stanza is received.
+     * Data is a string containing the stanza XML.
+     */
+    "received": "qx.event.type.Data",
+
+    /**
+     * Emmited then a stanza is beeing sent.
+     * Data is a string containing the stanza XML.
+     */
+    "send": "qx.event.type.Data",
+
+    /**
+     * Emmited when there is a stanza sending error.
+     * This event can be emmited after the connection
+     * becomes online.
+     */
+    "sendingError": "qx.event.type.Data"
+  },
+
+  construct() {
+    this.base(arguments);
+    ({client: this.__client, xml: this.__xml, jid: this.__jid} = window.XMPP);
   },
 
   members: {
-    __connection: null,
+    __xmpp: null,
+    __client: null,
+    __jid: null,
+    __xml: null,
 
     /**
      * Sends a built Srophe Stantza
      *
      */
-    send(built_stanza, callback) {
-      const conn = this.getConnection();
-      conn.send(built_stanza, callback);
+    send(stanza) {
+      this.__xmpp.send(stanza).catch((error) => this.fireDataEvent("sendingError", error));
     },
 
-    connect(jid, password, callback, context) {
-      if (context) {
-        callback = callback.bind(context);
-      }
-      const conn = this.getConnection();
-      conn.connect(jid, password, callback);
-    },
+    connect(username, password, service, domain, resource) {
+      this.__xmpp = this.__client({
+        service: service,
+        domain: domain,
+        resource: resource,
+        username: username,
+        password: password
+      });
 
-    resetConnection() {
-      this.getConnection().reset();
-    },
+      this.__addListeners(this.__xmpp);
 
-    /**
-     * Creates a new connection. Disconnects previous connection
-     *
-     * @param server {String} The address of the server
-     */
-    newConnection(server) {
-      const newConnection = (this.__connection = new Strophe.Connection(server));
+      this.__xmpp.on("element", function (stanza) {
+        console.log("Stanza: ", stanza.toString());
+      });
 
-      newConnection.xmlInput = this._xmlInput.bind(this);
-      newConnection.xmlOutput = this._xmlOutput.bind(this);
-      newConnection.rawInput = this._rawInput.bind(this);
-      newConnection.rawOutput = this._rawOutput.bind(this);
-      Strophe.log = this._log.bind(this);
-
-      this.fireDataEvent("newConnection", newConnection);
-      return newConnection;
-    },
-
-    _rawInput(data) {
-      this.fireDataEvent("rawInput", data);
-    },
-
-    _rawOutput(data) {
-      this.fireDataEvent("rawOutput", data);
-    },
-
-    _xmlInput(data) {
-      this.fireDataEvent("xmlInput", data);
-    },
-
-    _xmlOutput(data) {
-      this.fireDataEvent("xmlOutput", data);
-    },
-
-    _log(level, data) {
-      const levelString = qx.lang.Object.getKeyFromValue(Strophe.LogLevel, level);
-
-      this.fireDataEvent("log", `${levelString}: ${data}`);
+      this.__xmpp.start().catch(console.error);
     },
 
     /**
@@ -122,7 +106,19 @@ qx.Class.define("qmc.Service", {
      *
      */
     getConnection() {
-      return this.__connection;
+      return this.__xmpp;
+    },
+
+    __addListeners(client) {
+      client.on("status", (status) => this.fireDataEvent("status", status));
+      client.on("error", (error) => this.fireDataEvent("error", error));
+      client.on("online", (address) => this.fireDataEvent("online", `online as ${address}.`));
+      client.on("offline", () => this.fireDataEvent("offline", `Server is offline.`));
+      client.on("reconnecting", () => this.fireEvent("reconnecting"));
+      client.on("reconnected", () => this.fireEvent("reconnected"));
+
+      client.on("element", (stanza) => this.fireDataEvent("received", stanza.toString()));
+      client.on("send", (stanza) => this.fireDataEvent("send", stanza.toString()));
     }
   }
 });

@@ -62,59 +62,8 @@ qx.Class.define("qmc.views.ToolBar", {
       const address = this.__address.getValue();
 
       const service = qmc.Service.getInstance();
-      service.newConnection(address);
-
-      //prettier-ignore
-      service.connect(jid, password, this._connectionCallback, this);
+      service.connect(jid, password, address, undefined, undefined);
     },
 
-    _connectionCallback(status, error) {
-      const service = qmc.Service.getInstance();
-      const conn = service.getConnection();
-      const address = conn.service;
-
-      switch (status) {
-        case Strophe.Status.CONNECTING:
-          Strophe.debug(`Connecting to ${address}.`);
-          break;
-        case Strophe.Status.CONNFAIL:
-          Strophe.error(`Connection failed to ${address}. Error status ${error}.`);
-          break;
-        case Strophe.Status.DISCONNECTING:
-          Strophe.debug(`Disconnecting from ${address}.`);
-          break;
-        case Strophe.Status.DISCONNECTED:
-          const message = `Disconnected from ${address}.`;
-          if (error) {
-            Strophe.error(message + ". " + `Error status ${error}.`);
-          } else {
-            Strophe.debug(message);
-          }
-
-          // abrupt disconnection. reconnect
-          Strophe.debug("Attempting reconnection");
-          conn.reset()
-
-          qx.event.Timer.once(service.connect(conn.authzid, conn.authcid, this._connectionCallback, this), this, 5000);
-          break;
-        case Strophe.Status.ATTACHED:
-          Strophe.debug(`Attached to ${address}.`);
-          break;
-        case Strophe.Status.REDIRECT:
-          Strophe.debug(`Redirecting to ${message}`);
-          break;
-        case Strophe.Status.CONNTIMEOUT:
-          Strophe.error(`Connection to ${address} has timed out`);
-          break;
-        case Strophe.Status.AUTHENTICATING:
-          Strophe.debug(`Authenticating to ${address}.`);
-          break;
-        case Strophe.Status.AUTHFAIL:
-          Strophe.error(`Authentication to ${address} failed with ${message}.`);
-          break;
-        case Strophe.Status.ERROR:
-          Strophe.error(`Error ${message} has occured.`);
-      }
-    }
   }
 });

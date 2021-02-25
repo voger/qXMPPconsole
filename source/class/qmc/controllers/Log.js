@@ -5,16 +5,29 @@ qx.Class.define("qmc.controllers.Log", {
     this.base(arguments);
     this.__view = view;
 
-    service.addListener("rawInput", this.updateView, this);
-    service.addListener("rawOutput", this.updateView, this);
-    service.addListener("log", this.updateView, this);
+    // prettier-ignore
+    const supportedEvents= [
+        "status",
+        "error",
+        "online",
+        "offline",
+        "reconnecting",
+        "reconnected",
+        "received",
+        "send",
+        "sendingError"
+    ];
+
+    for (const event of supportedEvents) {
+      service.addListener(event, this.updateView, this);
+    }
   },
 
   members: {
     __view: null,
 
     updateView(evt) {
-      const data = evt.getData();
+      const data = evt.getData() || evt.getType();
       const meta = {
         timestamp: evt.getTimeStamp(),
         type: evt.getType()

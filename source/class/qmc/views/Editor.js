@@ -1,9 +1,3 @@
-/**
- *
- * @ignore (ace.edit)
- * @ignore (ace.require)
- *
- */
 // TODO: Make a pretty error messages banner
 //       and the logic to support it.
 qx.Class.define("qmc.views.Editor", {
@@ -36,12 +30,7 @@ qx.Class.define("qmc.views.Editor", {
 
     _onSend() {
       const stanza = this.getCurrentStanza();
-      // FIXME: If XML comments are invalid, this is
-      //       the place to remove them.
-      // const elem = qx.xml.Document.fromString(stanza);
-
-      const parser = new DOMParser();
-      const elem = parser.parseFromString(stanza, "application/xml").documentElement;
+      var elem = this.xmlParse(stanza);
 
       const service = qmc.Service.getInstance();
       service.send(elem);
