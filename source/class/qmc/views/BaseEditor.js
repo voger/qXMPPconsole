@@ -64,6 +64,7 @@ qx.Class.define("qmc.views.BaseEditor", {
           break;
         case "editor":
           control = new qx.ui.core.Widget();
+          control.setAppearance("editor-widget");
           this._add(control, {flex: 1});
           break;
       }
@@ -151,13 +152,20 @@ qx.Class.define("qmc.views.BaseEditor", {
       const container = widget.getContentElement().getDomElement();
       const editor = (this.__ace = ace.edit(container));
 
-      // consfigure the editor
-      editor.setTheme("ace/theme/xcode");
-      editor.setShowPrintMargin(false);
       const session = editor.getSession();
       session.setMode("ace/mode/xml");
       session.setUseSoftTabs(true);
       session.setTabSize(2);
+
+      // consfigure the editor
+      editor.setOptions({
+        fontFamily: "Roboto Mono",
+        scrollPastEnd: 0.1,
+        autoScrollEditorIntoView: true,
+        scrollSpeed: 1,
+        showPrintMargin: false,
+        theme: "ace/theme/xcode"
+      });
       // session.setValue("");
       this._applyFontSize(this.getFontSize());
       this._applyReadOnly(this.getReadOnly());

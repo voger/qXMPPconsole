@@ -61,6 +61,16 @@ qx.Theme.define("qmc.theme.Appearance", {
           font: "main-toolbar-button"
         };
       }
+    },
+
+    "editor-widget": {
+      include: "widget",
+
+      style() {
+        return {
+          font: "editor-font"
+        }
+      }
     }
   }
 });

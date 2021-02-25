@@ -1,8 +1,4 @@
-/**
- * @ignore(ace.*)
- *
- */
-qx.Class.define("qmc.views.LogView", {
+qx.Class.define("qmc.views.Log", {
   extend: qmc.views.BaseEditor,
 
   properties: {
@@ -15,7 +11,7 @@ qx.Class.define("qmc.views.LogView", {
   construct() {
     this.base(arguments);
 
-    this.__dateFormat = new qx.util.format.DateFormat("H:m d/M/y");
+    this.__dateFormat = new qx.util.format.DateFormat("H:m:s:SSS d/M/y");
   },
 
   members: {

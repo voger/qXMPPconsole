@@ -8,7 +8,7 @@ qx.Class.define("qmc.views.MainView", {
     this.__createEditorPane();
     this._addServices();
     this._addEditor();
-    this._addLogView();
+    this._addLog();
   },
 
   members: {
@@ -55,10 +55,10 @@ qx.Class.define("qmc.views.MainView", {
       this.__editorPane.add(this.__services, 1);
     },
 
-    _addLogView() {
-      this.__logView = new qmc.views.LogView();
-      this.__logController = new qmc.controllers.Log(this.__logView, this.__service);
-      this.add(this.__logView, 1);
+    _addLog() {
+      this.__log = new qmc.views.Log()
+      this.__logController = new qmc.controllers.Log(this.__log, this.__service);
+      this.add(this.__log, 1);
     }
   }
 });

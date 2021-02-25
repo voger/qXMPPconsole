@@ -57,6 +57,20 @@ qx.Theme.define("qmc.theme.Font", {
           ]
         }
       ]
+    },
+
+    "editor-font": {
+      size: 16,
+      family: ["monospace"],
+      // weight: "300",
+      sources: [
+        {
+          family: "Roboto Mono",
+          source: [
+            "qmc/fonts/RobotoMono/static/RobotoMono-Regular.ttf",
+          ]
+        }
+      ]
     }
   }
 });
