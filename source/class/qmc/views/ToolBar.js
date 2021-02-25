@@ -63,7 +63,6 @@ qx.Class.define("qmc.views.ToolBar", {
 
       const service = qmc.Service.getInstance();
       service.connect(jid, password, address, undefined, undefined);
-    },
-
+    }
   }
 });

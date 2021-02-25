@@ -44,7 +44,7 @@ qx.Class.define("qmc.views.LogView", {
 
       // https://stackoverflow.com/a/30222966/2604378
       let location = {
-        row: this.getLength(),
+        row: this.getNumberOfLines(),
         column: 0
       };
 
@@ -58,6 +58,10 @@ qx.Class.define("qmc.views.LogView", {
       }
 
       this.insert(logItem, location);
+
+      // scroll to the last line
+      const newLastLine = this.getNumberOfLines();
+      this.scrollToLine(newLastLine);
     },
 
     /**

@@ -109,6 +109,14 @@ qx.Class.define("qmc.views.BaseEditor", {
     },
 
     /**
+     * @return {Integer} The number of lines in the editor.
+     *
+     */
+    getNumberOfLines() {
+      return this.getEditor().getSession().getLength();
+    },
+
+    /**
      * Insert text at position
      *
      * @param text {String} The text to be inserted
@@ -125,8 +133,17 @@ qx.Class.define("qmc.views.BaseEditor", {
       return doc.insertMergedLines(position, ["", ""]);
     },
 
-    getLength() {
-      return this.getEditor().getSession().getLength();
+    /**
+     * Scrolls the editor to a line. If center is true,
+     * it puts the line in middle of screen (or attempts to).
+     *
+     * @param number {Integer} The line number.
+     * @param center {Boolean} If true try to center the line. Default `true`.
+     * @param animate {Boolean} If true animate scrolling. Default `true`.
+     * @param callback {Function} A function to to be called when animation is finished.
+     */
+    scrollToLine(number, center = true, animate = true, callback) {
+      this.getEditor().scrollToLine(number, center, animate, callback);
     },
 
     _onAppear() {
