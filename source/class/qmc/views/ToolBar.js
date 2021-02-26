@@ -61,7 +61,7 @@ qx.Class.define("qmc.views.ToolBar", {
       const password = this.__password.getValue();
       const address = this.__address.getValue();
 
-      const service = qmc.Service.getInstance();
+      const service = qmc.service.Service.getInstance();
       service.connect(jid, password, address, undefined, undefined);
     }
   }

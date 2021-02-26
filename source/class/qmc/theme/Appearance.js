@@ -69,7 +69,7 @@ qx.Theme.define("qmc.theme.Appearance", {
       style() {
         return {
           font: "editor-font"
-        }
+        };
       }
     }
   }

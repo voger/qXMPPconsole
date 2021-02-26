@@ -94,11 +94,11 @@ qx.Class.define("qmc.Service", {
 
       this.__addListeners(this.__xmpp);
 
-      this.__xmpp.on("element", function (stanza) {
-        console.log("Stanza: ", stanza.toString());
-      });
-
       this.__xmpp.start().catch(console.error);
+    },
+
+    setConnection(connection) {
+      this.__xmpp = connection;
     },
 
     /**
