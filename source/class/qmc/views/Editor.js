@@ -32,7 +32,7 @@ qx.Class.define("qmc.views.Editor", {
       const stanza = this.getCurrentStanza();
       var elem = this.xmlParse(stanza);
 
-      const service = qmc.Service.getInstance();
+      const service = qmc.service.Service.getInstance();
       service.send(elem);
     },
 

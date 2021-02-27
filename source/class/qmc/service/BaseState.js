@@ -7,6 +7,12 @@
  */
 qx.Class.define("qmc.service.BaseState", {
   extend: qx.core.Object,
+
+  /**
+   * Constructs a state. `client` is
+   * the client class that serves as
+   * interface to the other classes. Required.
+   */
   construct(client) {
     this.base(arguments);
 

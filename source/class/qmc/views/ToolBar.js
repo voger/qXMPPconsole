@@ -8,6 +8,8 @@ qx.Class.define("qmc.views.ToolBar", {
   construct() {
     this.base(arguments);
 
+    const service = qmc.service.Service.getInstance();
+
     const part1 = new qx.ui.toolbar.Part();
     part1.setSpacing(5);
     const jid = (this.__jid = new qx.ui.form.TextField());
@@ -39,12 +41,23 @@ qx.Class.define("qmc.views.ToolBar", {
 
     const connect = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
     connect.setAppearance("main-toolbar-button");
+    service.bind("state", connect, "enabled", {
+      converter(val) {
+        return val instanceof qmc.service.DisconnectedState;
+      }
+    });
+
     connect.addListener("execute", this._onConnect, this);
     part2.add(connect);
 
     const disconnect = (this.__disconnectBtn = new qx.ui.form.Button(this.tr("Disconnect")));
     disconnect.setAppearance("main-toolbar-button");
-    disconnect.setEnabled(false);
+    service.bind("state", disconnect, "enabled", {
+      converter(val) {
+        return val instanceof qmc.service.ConnectedState;
+      }
+    });
+    disconnect.addListener("execute", this._onDisconnect, this);
     part2.add(disconnect);
     this.add(part2, {flex: 3});
   },
@@ -63,6 +76,11 @@ qx.Class.define("qmc.views.ToolBar", {
 
       const service = qmc.service.Service.getInstance();
       service.connect(jid, password, address, undefined, undefined);
+    },
+
+    _onDisconnect() {
+      const service = qmc.service.Service.getInstance();
+      service.disconnect();
     }
   }
 });

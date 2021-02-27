@@ -3,7 +3,7 @@ qx.Class.define("qmc.views.MainView", {
 
   construct(orientation = "horizontal") {
     this.base(arguments, orientation);
-    this.__service = qmc.Service.getInstance();
+    this.__service = qmc.service.Service.getInstance();
 
     this.__createEditorPane();
     this._addServices();

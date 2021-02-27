@@ -6,14 +6,66 @@ qx.Class.define("qmc.service.Service", {
   type: "singleton",
   extend: qx.core.Object,
 
-  properties: {
-    status: {
-      check: "String",
-      nullable: false,
-      init: "offline",
-      event: "changeStatus"
-    },
+  events: {
+    /**
+     * Emmited when the client status changes.
+     * Data is a string containing the status.
+     */
+    "status": "qx.event.type.Data",
 
+    /**
+     * Emmited when an error occurs.
+     * Data is a string containing the error.
+     */
+    "error": "qx.event.type.Data",
+
+    /**
+     * Emmited when the connection is online.
+     * Data is a string informing the server is
+     * online.
+     */
+    "online": "qx.event.type.Data",
+
+    /**
+     * Emmited when the connection is offline.
+     * Data is a string informing the server is
+     * offline.
+     */
+    "offline": "qx.event.type.Data",
+
+    /**
+     * Emmited when the connection is reconnecting
+     * after a diconnect.
+     */
+    "reconnecting": "qx.event.type.Event",
+
+    /**
+     * Emmited when the connection is reconnected
+     * after a diconnect.
+     */
+    "reconnected": "qx.event.type.Event",
+
+    /**
+     * Emmited then a stanza is received.
+     * Data is a string containing the stanza XML.
+     */
+    "received": "qx.event.type.Data",
+
+    /**
+     * Emmited then a stanza is beeing sent.
+     * Data is a string containing the stanza XML.
+     */
+    "send": "qx.event.type.Data",
+
+    /**
+     * Emmited when there is a stanza sending error.
+     * This event can be emmited after the connection
+     * becomes online.
+     */
+    "sendingError": "qx.event.type.Data"
+  },
+
+  properties: {
     /**
      * @internal
      * The state class
@@ -21,7 +73,9 @@ qx.Class.define("qmc.service.Service", {
      */
     state: {
       nullable: false,
-      deferredInit: true
+      deferredInit: true,
+      apply: "_applyState",
+      event: "changeState"
     }
   },
 
@@ -31,23 +85,30 @@ qx.Class.define("qmc.service.Service", {
   },
 
   members: {
-    __xmpp: null,
-    __client: null,
+    __connection: null,
 
     connect(username, password, service, domain, resource) {
       this.getState().connect(username, password, service, domain, resource);
     },
 
-    getClient() {
-      return this.__client;
+    disconnect() {
+      this.getState().disconnect();
+    },
+
+    send(stanza) {
+      this.getState().send(stanza);
     },
 
     setConnection(connection) {
-      this.__xmpp = connection;
+      this.__connection = connection;
     },
 
     getConnection() {
-      return this.__xmpp;
+      return this.__connection;
+    },
+
+    _applyState(_val, old) {
+      old && old.dispose();
     }
   }
 });
