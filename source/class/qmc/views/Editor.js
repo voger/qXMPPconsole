@@ -1,7 +1,12 @@
 // TODO: Make a pretty error messages banner
 //       and the logic to support it.
+/**
+ * @ignore(ace.*)
+ *
+ */
 qx.Class.define("qmc.views.Editor", {
   extend: qmc.views.BaseEditor,
+  include: [qmc.command.MCommand],
 
   construct() {
     this.base(arguments);
@@ -11,29 +16,56 @@ qx.Class.define("qmc.views.Editor", {
     const part = new qx.ui.toolbar.Part();
     part.setSpacing(3);
 
+    const sendCmd = new qx.ui.command.Command("Ctrl+Enter");
+    sendCmd.setToolTipText(sendCmd.getShortcut());
+    sendCmd.addListener("execute", this.send, this);
+
     const sendBtn = new qx.ui.form.Button(this.tr("Send"));
-    sendBtn.addListener("execute", this._onSend, this);
-    sendBtn.setKeepFocus(true);
+    sendBtn.set({
+      keepFocus: true,
+      command: sendCmd
+    });
     part.add(sendBtn);
 
-    const prettifyBtn = new qx.ui.form.Button(this.tr("Prettify"));
-    prettifyBtn.addListener("execute", this.prettify, this);
-    prettifyBtn.setKeepFocus(true);
+    const prettifyCmd = new qx.ui.command.Command("Ctrl+Shift+F");
+    prettifyCmd.setToolTipText(prettifyCmd.getShortcut());
+    prettifyCmd.addListener("execute", this.prettify, this);
+
+    const prettifyBtn = new qx.ui.form.Button(this.tr("Format"));
+    prettifyBtn.set({
+      keepFocus: true,
+      command: prettifyCmd
+    });
+
     part.add(prettifyBtn);
 
     this.addAt(part, 0);
+
+    // the mixin constructor is called after the class constructor.
+    // Let it initialize first.
+    // prettier-ignore
+    qx.event.Timer.once(function() {
+    this.addCommand("format", prettifyCmd);
+    this.addCommand("send", sendCmd);
+    }, this, 0);
   },
 
   members: {
     // ace editor's Range object
     __Range: null,
 
-    _onSend() {
-      const stanza = this.getCurrentStanza();
-      var elem = this.xmlParse(stanza);
+    __commandGroup: null,
 
-      const service = qmc.service.Service.getInstance();
-      service.send(elem);
+    send() {
+      try {
+        const stanza = this.getCurrentStanza();
+        var elem = this.xmlParse(stanza);
+
+        const service = qmc.service.Service.getInstance();
+        service.send(elem);
+      } catch (err) {
+        this.info("Invalid XML.");
+      }
     },
 
     // override
@@ -44,16 +76,31 @@ qx.Class.define("qmc.views.Editor", {
       editor.setDisplayIndentGuides(true);
     },
 
+    /**
+     * Returns a string containig the stanza where the
+     * the cursor is positioned. Currently it doesn't
+     * work with self closing tags so please avoid those.
+     *
+     * @return {String} The current XML stanza
+     * @throws {Error} if the XML root tags are not opened and closed properly.
+     */
     getCurrentStanza() {
       const editor = this.getEditor();
-      try {
-        this.selectCurrentStanza();
-        return editor.getSelectedText();
-      } catch (err) {
-        console.error(err);
-      }
+      this.selectCurrentStanza();
+      const selection = editor.getSelectedText();
+      editor.clearSelection();
+      return selection;
     },
 
+    /**
+     * Selects the current stanza relative to the cursor
+     * position.
+     * Currently it doesn't * work with self closing tags
+     * so please avoid those.
+     *
+     * @throws {Error} if the XML root tags are not opened and closed properly.
+     *
+     */
     selectCurrentStanza() {
       const editor = this.getEditor();
 
@@ -77,13 +124,9 @@ qx.Class.define("qmc.views.Editor", {
         };
 
         // get selection range start points
-        try {
-          var {
-            start: {row: startRow, column: startColumn}
-          } = editor.find(re, searchOpenTag);
-        } catch (err) {
-          throw new ReferenceError("Start tag invalid");
-        }
+        var {
+          start: {row: startRow, column: startColumn}
+        } = editor.find(re, searchOpenTag);
 
         // save the stanza name. The selected text
         // is prepended with `<` so remove that
@@ -97,13 +140,9 @@ qx.Class.define("qmc.views.Editor", {
           start: new this.__Range(startRow, startColumn, startRow, startColumn)
         };
 
-        try {
-          var {
-            end: {row: endRow, column: endColumn}
-          } = editor.find(`</${stanzaTag}>`, searchCloseTag);
-        } catch (err) {
-          throw new ReferenceError("End tag invalid");
-        }
+        var {
+          end: {row: endRow, column: endColumn}
+        } = editor.find(`</${stanzaTag}>`, searchCloseTag);
 
         // create the new range
         const range = new this.__Range(startRow, startColumn, endRow, endColumn);
@@ -122,7 +161,7 @@ qx.Class.define("qmc.views.Editor", {
         value = this.xmlBeautify(value);
         editor.getSession().replace(selectionRange, value);
       } catch (err) {
-        console.error(err);
+        this.info("Invalid XML.");
       } finally {
         editor.clearSelection();
       }

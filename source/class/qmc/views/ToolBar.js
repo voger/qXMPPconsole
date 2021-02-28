@@ -4,11 +4,10 @@
  */
 qx.Class.define("qmc.views.ToolBar", {
   extend: qx.ui.toolbar.ToolBar,
+  include: [qmc.command.MCommand],
 
   construct() {
     this.base(arguments);
-
-    const service = qmc.service.Service.getInstance();
 
     const part1 = new qx.ui.toolbar.Part();
     part1.setSpacing(5);
@@ -31,35 +30,58 @@ qx.Class.define("qmc.views.ToolBar", {
     const part2 = new qx.ui.toolbar.Part();
     part2.setSpacing(5);
     const address = (this.__address = new qx.ui.form.TextField());
-    address.setAppearance("connection-text-field");
-    address.setPlaceholder(this.tr("Service address"));
-    address.setAllowGrowX(true);
+    address.set({
+      appearance: "connection-text-field",
+      placeholder: qx.locale.Manager.tr("Service address"),
+      allowGrowX: true
+    });
 
     // FIXME: remove next line
     address.setValue("ws://localhost:5443/ws");
     part2.add(address, {flex: 3});
 
-    const connect = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
-    connect.setAppearance("main-toolbar-button");
-    service.bind("state", connect, "enabled", {
+    // create the buttons
+    const service = qmc.service.Service.getInstance();
+
+    const connectBtn = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
+    connectBtn.setAppearance("main-toolbar-button");
+    service.bind("state", connectBtn, "enabled", {
       converter(val) {
         return val instanceof qmc.service.DisconnectedState;
       }
     });
 
-    connect.addListener("execute", this._onConnect, this);
-    part2.add(connect);
+    const connectCmd = new qx.ui.command.Command("Enter");
+    connectCmd.addListener("execute", this._onConnect, this);
+    connectCmd.setToolTipText(connectCmd.getShortcut());
+    connectBtn.setCommand(connectCmd);
 
-    const disconnect = (this.__disconnectBtn = new qx.ui.form.Button(this.tr("Disconnect")));
-    disconnect.setAppearance("main-toolbar-button");
-    service.bind("state", disconnect, "enabled", {
+    part2.add(connectBtn);
+
+    const disconnectBtn = (this.__disconnectBtn = new qx.ui.form.Button(this.tr("Disconnect")));
+    disconnectBtn.setAppearance("main-toolbar-button");
+    service.bind("state", disconnectBtn, "enabled", {
       converter(val) {
         return val instanceof qmc.service.ConnectedState;
       }
     });
-    disconnect.addListener("execute", this._onDisconnect, this);
-    part2.add(disconnect);
+
+    const disconnectCmd = new qx.ui.command.Command("Esc");
+    disconnectCmd.setToolTipText(disconnectCmd.getShortcut());
+
+    disconnectCmd.addListener("execute", this._onDisconnect, this);
+    disconnectBtn.setCommand(disconnectCmd);
+
+    part2.add(disconnectBtn);
     this.add(part2, {flex: 3});
+
+    // the mixin constructor is called after the class constructor.
+    // Let it initialize first.
+    // prettier-ignore
+    qx.event.Timer.once(function() {
+    this.addCommand("connect", connectCmd);
+    this.addCommand("disconnect", disconnectCmd);
+    }, this, 0);
   },
 
   members: {

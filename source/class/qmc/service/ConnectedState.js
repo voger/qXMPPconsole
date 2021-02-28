@@ -18,15 +18,9 @@ qx.Class.define("qmc.service.ConnectedState", {
       const client = this._client;
       const connection = client.getConnection();
 
-      connection
-        .send(stanza)
-        .then((evt) => {
-          console.log(evt);
-        })
-        .catch((error) => {
-          client.fireDataEvent("sendingError", error);
-        });
+      connection.send(stanza).catch((error) => {
+        client.fireDataEvent("sendingError", error);
+      });
     }
   }
 });
-
