@@ -1,7 +1,7 @@
 /**
  * @asset(qx/icon/${qx.icontheme}/32/places/network-workgroup.png)
  * @asset(qx/icon/${qx.icontheme}/32/places/network-server.png)
- * @asset(qxl/demobrowser/demo/icons/loading22.gif)
+ * @asset(qmc/styles/info-view.css)
  *
  */
 qx.Class.define("qmc.views.Services", {
@@ -191,6 +191,7 @@ qx.Class.define("qmc.views.Services", {
     _initServicesDescr() {
       const descr = (this.__servicesDescr = new qx.ui.embed.Html());
       descr.setOverflow("auto", "auto");
+      descr.setCssClass("info-view");
       this.__mainContainer.add(descr);
     },
 

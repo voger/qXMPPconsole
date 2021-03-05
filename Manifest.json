@@ -41,6 +41,7 @@
       "qmc/xmppjs/xmpp.js",
       "qmc/xmppjs/ltx.js",
       "qmc/xmppjs/xml-formatter.js"
-    ]
+    ],
+    "css": ["qmc/styles/info-view.css"]
   }
 }
