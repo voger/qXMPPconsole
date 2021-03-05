@@ -3,7 +3,6 @@ qx.Class.define("qmc.views.MainView", {
 
   construct(orientation = "horizontal") {
     this.base(arguments, orientation);
-    this.__service = qmc.service.Service.getInstance();
 
     this.__createEditorPane();
     this._addServices();
@@ -17,9 +16,6 @@ qx.Class.define("qmc.views.MainView", {
 
     __logView: null,
     __logController: null,
-
-    // the strophe.js service
-    __service: null,
 
     // discovered services
     __services: null,
@@ -49,7 +45,7 @@ qx.Class.define("qmc.views.MainView", {
     },
 
     _addServices() {
-      this.__services = new qx.ui.core.Widget().set({
+      this.__services = new qmc.views.Services().set({
         maxWidth: 200
       });
       this.__editorPane.add(this.__services, 1);
@@ -57,7 +53,8 @@ qx.Class.define("qmc.views.MainView", {
 
     _addLog() {
       this.__log = new qmc.views.Log()
-      this.__logController = new qmc.controllers.Log(this.__log, this.__service);
+      const service = qmc.service.Service.getInstance();
+      this.__logController = new qmc.controllers.Log(this.__log, service);
       this.add(this.__log, 1);
     }
   }

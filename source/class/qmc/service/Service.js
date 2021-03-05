@@ -107,6 +107,18 @@ qx.Class.define("qmc.service.Service", {
       return this.__connection;
     },
 
+    xml(...args) {
+      return window.XMPP.xml.apply(window.XMPP, args);
+    },
+
+    getDomain() {
+      return this.getConnection().entity.options.domain ?? "";
+    },
+
+    async request(element) {
+      return await this.getConnection().iqCaller.request(element);
+    },
+
     _applyState(_val, old) {
       old && old.dispose();
     }

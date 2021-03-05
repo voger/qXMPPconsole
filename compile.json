@@ -16,8 +16,9 @@
   "defaultTarget": "source",
   "locales": ["en"],
   "environment": {
-      "qx.icontheme": "Tango"
+    "qx.icontheme": "Tango"
   },
+  "include": ["qx.module.Template", "qx.module.Core"],
   "applications": [
     {
       "class": "qmc.Application",
