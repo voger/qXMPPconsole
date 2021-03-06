@@ -147,6 +147,10 @@ qx.Class.define("qmc.views.BaseEditor", {
       this.getEditor().scrollToLine(number, center, animate, callback);
     },
 
+    setValue(val) {
+      this.getEditor().setValue(val);
+    },
+
     _onAppear() {
       const widget = this.getChildControl("editor");
       const container = widget.getContentElement().getDomElement();
@@ -182,11 +186,17 @@ qx.Class.define("qmc.views.BaseEditor", {
     },
 
     _applyFontSize(val) {
-      this.__ace && this.__ace.setFontSize(val);
+      // ace initializes on appear
+      // so check if it is ready first
+      const editor = this.getEditor();
+      editor && editor.setFontSize(val);
     },
 
     _applyReadOnly(val) {
-      this.__ace && this.__ace.setReadOnly(val);
+      // ace initializes on appear
+      // so check if it is ready first
+      const editor = this.getEditor();
+      editor && editor.setReadOnly(val);
     }
   }
 });

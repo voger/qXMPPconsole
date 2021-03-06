@@ -4,6 +4,7 @@ qx.Class.define("qmc.controllers.Log", {
   construct(view, service) {
     this.base(arguments);
     this.__view = view;
+    view.setController(this);
 
     // prettier-ignore
     const supportedEvents= [
@@ -34,6 +35,10 @@ qx.Class.define("qmc.controllers.Log", {
       };
 
       this.__view.append(data, meta);
+    },
+
+    clear() {
+      this.__view.clear()
     }
   }
 });

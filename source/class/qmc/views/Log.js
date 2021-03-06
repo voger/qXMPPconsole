@@ -5,6 +5,10 @@ qx.Class.define("qmc.views.Log", {
     readOnly: {
       refine: true,
       init: true
+    },
+
+    controller: {
+      nullable: true
     }
   },
 
@@ -12,6 +16,15 @@ qx.Class.define("qmc.views.Log", {
     this.base(arguments);
 
     this.__dateFormat = new qx.util.format.DateFormat("H:m:s:SSS d/M/y");
+
+    const part = new qx.ui.toolbar.Part();
+
+    // create a clear button
+    const clearBtn = new qx.ui.form.Button(this.tr("Clear All"));
+    clearBtn.addListener("execute", () => this.getController().clear());
+
+    part.add(clearBtn);
+    this.addAt(part, 0);
   },
 
   members: {
@@ -70,6 +83,10 @@ qx.Class.define("qmc.views.Log", {
      */
     formatStanza(data) {
       return this.xmlBeautify(data);
+    },
+
+    clear() {
+      this.setValue("");
     }
   }
 });
