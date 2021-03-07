@@ -1,0 +1,11 @@
+.info-view {
+  font-family: "Noto Sans", sans-serif !important;
+  font-size: 0.8vw !important;
+  padding: 10px !important;
+  background-color: #eee !important;
+  line-height: 1.2em !important;
+}
+
+.info-view h3::after {
+  content: ":";
+}
