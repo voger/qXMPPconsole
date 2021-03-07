@@ -75,6 +75,11 @@ qx.Class.define("qmc.views.BaseEditor", {
      * Helper method to beautify XML
      *
      * @param text {String} The XML text to beutify
+     * @param formatOpts {Object} XML beautifier format options
+     * See https://github.com/chrisbottin/xml-formatter#options
+     * for details.
+     *
+     * @return {String} The formatted XML
      */
     xmlBeautify(text, formatOpts = {}) {
       const opts = {

@@ -11,7 +11,7 @@ qx.Class.define("qmc.service.ConnectedState", {
       connection.stop().then(() => {
           client.setState(new qmc.service.DisconnectedState(client));
         })
-        .catch(console.error);
+        .catch(this.error);
     },
 
     send(stanza) {

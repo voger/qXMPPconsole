@@ -16,7 +16,7 @@ qx.Class.define("qmc.service.DisconnectedState", {
       this.__addListeners(connection, client);
       client.setConnection(connection);
 
-      connection.start().catch(console.error);
+      connection.start().catch(this.error);
 
       // We set the new state before the connections
       // becomes actualy `online` because xmppjs will

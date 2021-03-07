@@ -14,15 +14,11 @@ qx.Class.define("qmc.views.ToolBar", {
     const jid = (this.__jid = new qx.ui.form.TextField());
     jid.setAppearance("connection-text-field");
     jid.setPlaceholder(this.tr("JID"));
-    // FIXME: remove next line
-    jid.setValue("qqq@localhost");
     part1.add(jid);
 
     const password = (this.__password = new qx.ui.form.PasswordField());
     password.setPlaceholder(this.tr("Password"));
     password.setAppearance("connection-text-field");
-    // FIXME: remove next line
-    password.setValue("qqq");
     part1.add(password);
 
     this.add(part1);
@@ -36,8 +32,6 @@ qx.Class.define("qmc.views.ToolBar", {
       allowGrowX: true
     });
 
-    // FIXME: remove next line
-    address.setValue("ws://localhost:5443/ws");
     part2.add(address, {flex: 4});
 
     const domain = (this.__domain = new qx.ui.form.TextField());
