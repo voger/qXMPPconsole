@@ -1,7 +1,7 @@
 {
   "$schema": "https://qooxdoo.org/schema/Manifest-1-0-0.json",
   "info": {
-    "name": "qMPPconsole",
+    "name": "qXMPPconsole",
 
     "summary": "Debugging console for XMPP",
     "description": "",

@@ -9,7 +9,7 @@
 ************************************************************************ */
 
 /**
- * This is the main application class of "qMPPconsole"
+ * This is the main application class of "qXMPPconsole"
  *
  * @asset(qmc/*)
  */

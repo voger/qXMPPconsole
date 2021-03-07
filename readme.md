@@ -1,4 +1,4 @@
-# qMPPconsole
+# qXMPPconsole
 
 Debugging console for XMPP
 
