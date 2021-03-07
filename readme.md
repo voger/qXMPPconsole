@@ -6,7 +6,7 @@ to localhost. Comments, issues, pull requests are welcome.
 
 The application is a single static web page and looks like this
 
-![looks_like_this](https://raw.githubusercontent.com/voger/qXMPPconsole/main/screens/screenshoot.png)
+![looks_like_this](https://github.com/voger/qXMPPconsole/blob/master/screens/screenshot.png)
 
 You can go to https://voger.github.io/qXMPPconsole/ and use it right away or you can clone this repo and use it
 in your own computer.
