@@ -38,7 +38,7 @@ qx.Class.define("qmc.views.ToolBar", {
 
     // FIXME: remove next line
     address.setValue("ws://localhost:5443/ws");
-    part2.add(address, {flex: 3});
+    part2.add(address, {flex: 4});
 
     const domain = (this.__domain = new qx.ui.form.TextField());
     domain.set({

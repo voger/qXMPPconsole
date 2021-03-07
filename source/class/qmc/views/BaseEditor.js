@@ -148,7 +148,7 @@ qx.Class.define("qmc.views.BaseEditor", {
     },
 
     setValue(val) {
-      this.getEditor().setValue(val);
+      this.getEditor().getSession().setValue(val);
     },
 
     _onAppear() {
