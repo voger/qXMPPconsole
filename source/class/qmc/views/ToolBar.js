@@ -40,6 +40,22 @@ qx.Class.define("qmc.views.ToolBar", {
     address.setValue("ws://localhost:5443/ws");
     part2.add(address, {flex: 3});
 
+    const domain = (this.__domain = new qx.ui.form.TextField());
+    domain.set({
+      appearance: "connection-text-field",
+      placeholder: qx.locale.Manager.tr("Domain"),
+      allowGrowX: true
+    });
+    part2.add(domain, {flex: 1});
+
+    const resource = (this.__resource = new qx.ui.form.TextField());
+    resource.set({
+      appearance: "connection-text-field",
+      placeholder: qx.locale.Manager.tr("Resource"),
+      allowGrowX: true
+    });
+    part2.add(resource, {flex: 1});
+
     // create the buttons
     const service = qmc.service.Service.getInstance();
 
@@ -88,6 +104,8 @@ qx.Class.define("qmc.views.ToolBar", {
     __jid: null,
     __password: null,
     __address: null,
+    __domain: null,
+    __resource: null,
     __connectBtn: null,
     __disconnectBtn: null,
 
@@ -95,9 +113,11 @@ qx.Class.define("qmc.views.ToolBar", {
       const jid = this.__jid.getValue();
       const password = this.__password.getValue();
       const address = this.__address.getValue();
+      const domain = this.__domain.getValue();
+      const resource = this.__resource.getValue();
 
       const service = qmc.service.Service.getInstance();
-      service.connect(jid, password, address, undefined, undefined);
+      service.connect(jid, password, address, domain, resource);
     },
 
     _onDisconnect() {
