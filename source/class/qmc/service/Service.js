@@ -87,8 +87,8 @@ qx.Class.define("qmc.service.Service", {
   members: {
     __connection: null,
 
-    connect(username, password, service, domain, resource) {
-      this.getState().connect(username, password, service, domain, resource);
+    connect(connectionParams) {
+      this.getState().connect(connectionParams);
     },
 
     disconnect() {

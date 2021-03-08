@@ -9,51 +9,62 @@ qx.Class.define("qmc.views.ToolBar", {
   construct() {
     this.base(arguments);
 
+    const form = new qx.ui.form.Form();
+
     const part1 = new qx.ui.toolbar.Part();
     part1.setSpacing(5);
-    const jid = (this.__jid = new qx.ui.form.TextField());
-    jid.setAppearance("connection-text-field");
-    jid.setPlaceholder(this.tr("JID"));
+
+    const jid = new qx.ui.form.TextField().set({
+      appearance: "connection-text-field",
+      placeholder: this.tr("JID"),
+      required: true
+    });
+    form.add(jid, "jid", null, "username");
     part1.add(jid);
 
-    const password = (this.__password = new qx.ui.form.PasswordField());
-    password.setPlaceholder(this.tr("Password"));
-    password.setAppearance("connection-text-field");
+    const password = new qx.ui.form.PasswordField().set({
+      appearance: "connection-text-field",
+      placeholder: this.tr("Password"),
+      required: true
+    });
+    form.add(password, "password", null, "password");
     part1.add(password);
-
     this.add(part1);
 
     const part2 = new qx.ui.toolbar.Part();
     part2.setSpacing(5);
-    const address = (this.__address = new qx.ui.form.TextField());
-    address.set({
-      appearance: "connection-text-field",
-      placeholder: qx.locale.Manager.tr("Service address"),
-      allowGrowX: true
-    });
 
+    const address = new qx.ui.form.TextField().set({
+      appearance: "connection-text-field",
+      placeholder: this.tr("Service address"),
+      required: true,
+      requiredInvalidMessage: this.tr("Address is required")
+    });
+    form.add(address, "address", null, "service");
     part2.add(address, {flex: 4});
 
-    const domain = (this.__domain = new qx.ui.form.TextField());
-    domain.set({
+    const domain = new qx.ui.form.TextField().set({
       appearance: "connection-text-field",
-      placeholder: qx.locale.Manager.tr("Domain"),
-      allowGrowX: true
+      placeholder: this.tr("Domain")
     });
+    form.add(domain, "domain", null, "domain");
     part2.add(domain, {flex: 1});
 
-    const resource = (this.__resource = new qx.ui.form.TextField());
-    resource.set({
+    const resource = new qx.ui.form.TextField().set({
       appearance: "connection-text-field",
-      placeholder: qx.locale.Manager.tr("Resource"),
-      allowGrowX: true
+      placeholder: this.tr("Resource")
     });
+    form.add(resource, "resource", null, "resource");
     part2.add(resource, {flex: 1});
+
+    // create the controller and the model
+    this.__formController = new qx.data.controller.Form(null, form);
+    this.__formController.createModel();
 
     // create the buttons
     const service = qmc.service.Service.getInstance();
 
-    const connectBtn = (this.__connectBtn = new qx.ui.form.Button(this.tr("Connect")));
+    const connectBtn = new qx.ui.form.Button(this.tr("Connect"));
     connectBtn.setAppearance("main-toolbar-button");
     service.bind("state", connectBtn, "enabled", {
       converter(val) {
@@ -95,23 +106,16 @@ qx.Class.define("qmc.views.ToolBar", {
   },
 
   members: {
-    __jid: null,
-    __password: null,
-    __address: null,
-    __domain: null,
-    __resource: null,
-    __connectBtn: null,
-    __disconnectBtn: null,
+    __formController: null,
 
     _onConnect() {
-      const jid = this.__jid.getValue();
-      const password = this.__password.getValue();
-      const address = this.__address.getValue();
-      const domain = this.__domain.getValue();
-      const resource = this.__resource.getValue();
-
-      const service = qmc.service.Service.getInstance();
-      service.connect(jid, password, address, domain, resource);
+      const formController = this.__formController;
+      if (formController.getTarget().validate()) {
+        const service = qmc.service.Service.getInstance();
+        const model = formController.getModel();
+        const connectionParams = qx.util.Serializer.toNativeObject(model);
+        service.connect(connectionParams);
+      }
     },
 
     _onDisconnect() {

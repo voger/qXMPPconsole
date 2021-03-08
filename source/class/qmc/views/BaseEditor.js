@@ -175,6 +175,8 @@ qx.Class.define("qmc.views.BaseEditor", {
         showPrintMargin: false,
         theme: "ace/theme/xcode"
       });
+
+      // ace.config.setModuleUrl("ace/mode/xml_worker", jsonWorkerUrl)
       // session.setValue("");
       this._applyFontSize(this.getFontSize());
       this._applyReadOnly(this.getReadOnly());
