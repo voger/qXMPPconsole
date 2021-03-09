@@ -34,8 +34,8 @@
 
   "externalResources": {
     "script": [
-      "qmc/ace/worker-xml.js",
       "qmc/ace/ace.js",
+      "qmc/ace/worker-xml.js",
       "qmc/ace/mode-xml.js",
       "qmc/ace/theme-xcode.js",
       "qmc/ace/ext-searchbox.js",
