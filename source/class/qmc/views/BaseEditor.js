@@ -157,7 +157,13 @@ qx.Class.define("qmc.views.BaseEditor", {
     },
 
     async _onAppear() {
-      const dynLoader = new qx.util.DynamicScriptLoader(["resource/qmc/ace/worker-xml.js"])
+      const dynLoader = new qx.util.DynamicScriptLoader([
+        "resource/qmc/ace/worker-xml.js",
+        "qmc/ace/ace.js",
+        "qmc/ace/mode-xml.js",
+        "qmc/ace/theme-xcode.js",
+        "qmc/ace/ext-searchbox.js"
+      ]);
       await dynLoader.start();
       const widget = this.getChildControl("editor");
       const container = widget.getContentElement().getDomElement();

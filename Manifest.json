@@ -34,10 +34,6 @@
 
   "externalResources": {
     "script": [
-      "qmc/ace/ace.js",
-      "qmc/ace/mode-xml.js",
-      "qmc/ace/theme-xcode.js",
-      "qmc/ace/ext-searchbox.js",
       "qmc/xmppjs/xmpp.js",
       "qmc/xmppjs/ltx.js",
       "qmc/xmppjs/xml-formatter.js"
