@@ -156,7 +156,9 @@ qx.Class.define("qmc.views.BaseEditor", {
       this.getEditor().getSession().setValue(val);
     },
 
-    _onAppear() {
+    async _onAppear() {
+      const dynLoader = new qx.util.DynamicScriptLoader(["resource/qmc/ace/worker-xml.js"])
+      await dynLoader.start();
       const widget = this.getChildControl("editor");
       const container = widget.getContentElement().getDomElement();
       const editor = (this.__ace = ace.edit(container));
