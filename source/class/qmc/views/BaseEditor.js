@@ -156,21 +156,13 @@ qx.Class.define("qmc.views.BaseEditor", {
       this.getEditor().getSession().setValue(val);
     },
 
-    async _onAppear() {
-      const dynLoader = new qx.util.DynamicScriptLoader([
-        "resource/qmc/ace/worker-xml.js",
-        "qmc/ace/ace.js",
-        "qmc/ace/mode-xml.js",
-        "qmc/ace/theme-xcode.js",
-        "qmc/ace/ext-searchbox.js"
-      ]);
-      await dynLoader.start();
+    _onAppear() {
       const widget = this.getChildControl("editor");
       const container = widget.getContentElement().getDomElement();
       const editor = (this.__ace = ace.edit(container));
 
       const session = editor.getSession();
-      session.setMode("ace/mode/xml");
+      // session.setMode("ace/mode/xml");
       session.setUseSoftTabs(true);
       session.setTabSize(2);
 
@@ -181,11 +173,11 @@ qx.Class.define("qmc.views.BaseEditor", {
         autoScrollEditorIntoView: true,
         scrollSpeed: 1,
         showPrintMargin: false,
-        theme: "ace/theme/xcode"
+        theme: "ace/theme/xcode",
+        mode: "ace/mode/xml",
+        useWorker: false
       });
 
-      // ace.config.setModuleUrl("ace/mode/xml_worker", jsonWorkerUrl)
-      // session.setValue("");
       this._applyFontSize(this.getFontSize());
       this._applyReadOnly(this.getReadOnly());
 

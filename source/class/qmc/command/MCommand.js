@@ -1,9 +1,9 @@
 qx.Mixin.define("qmc.command.MCommand", {
   construct() {
     this.__commandGroup = new qx.ui.command.Group();
+    this.deactivateCommands();
     this.addListener("activate", this.activateCommands, this);
     this.addListener("deactivate", this.deactivateCommands, this);
-    this.deactivateCommands();
   },
 
   members: {
@@ -18,6 +18,8 @@ qx.Mixin.define("qmc.command.MCommand", {
      * @return {Boolean} <code>false</code> if key already added before
      */
     addCommand(key, command) {
+      // the command starts inactive
+      command.setActive(false);
       return this.__commandGroup.add(key, command);
     },
 
