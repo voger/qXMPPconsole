@@ -58,7 +58,7 @@ qx.Class.define("qmc.views.ToolBar", {
     part2.add(resource, {flex: 1});
 
     // create the controller and the model
-    this.__formController = new qx.data.controller.Form(null, form);
+    this.__formController = new qx.data.controller.Form(null, form, true);
     this.__formController.createModel();
 
     // create the buttons
@@ -112,6 +112,7 @@ qx.Class.define("qmc.views.ToolBar", {
       const formController = this.__formController;
       if (formController.getTarget().validate()) {
         const service = qmc.service.Service.getInstance();
+        formController.updateModel();
         const model = formController.getModel();
         const connectionParams = qx.util.Serializer.toNativeObject(model);
         service.connect(connectionParams);

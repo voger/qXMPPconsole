@@ -3,14 +3,15 @@ qx.Class.define("qmc.service.DisconnectedState", {
 
   members: {
     async connect(connectionParams) {
-        const connection = window.XMPP.client(connectionParams);
+      const connection = window.XMPP.client(connectionParams);
+      const client = this._client;
       try {
-        const client = this._client;
         this.__addListeners(connection, client);
         client.setConnection(connection);
         await connection.start();
         client.setState(new qmc.service.ConnectedState(client));
       } catch (err) {
+        client.fireDataEvent("error", err);
         connection.stop();
       }
     },

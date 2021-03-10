@@ -18,9 +18,10 @@ qx.Mixin.define("qmc.command.MCommand", {
      * @return {Boolean} <code>false</code> if key already added before
      */
     addCommand(key, command) {
-      // the command starts inactive
-      command.setActive(false);
-      return this.__commandGroup.add(key, command);
+      const group = this.__commandGroup;
+      // the command's activenes is the same as group's
+      command.setActive(group.getActive());
+      return group.add(key, command);
     },
 
     /**
