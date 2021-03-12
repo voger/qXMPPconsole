@@ -1,8 +1,8 @@
 # qXMPPconsole
 
 qXMPPconsole is a browser based XMPP console. It is writen with the purpose to aid 
-in learning the XMPP protocol. So far it is tested only over websockets and connecting
-to localhost. Comments, issues, pull requests are welcome.
+in learning the XMPP protocol. So far it is tested only over websockets and connected
+to a ejabberd docker image running on localhost. Comments, issues, pull requests are welcome.
 
 The application is a single static web page and looks like this
 
@@ -19,7 +19,7 @@ in your own computer.
    ```console
     $ npm install 
    ```
-    1. Optionally and not necessary at all, you may also run
+    1. Optionally and not necessary at all, you may also run the command below to build dpendencies.
         ```console
           $ npm run-script build
         ```
@@ -32,7 +32,7 @@ in your own computer.
 
 4. You can also make a build version to deploy it somewhere
    ```
-   $ npx deploy --out=dist --clean
+   $ npx qx deploy --out=dist --clean
    ```
 
    and move the generated `dist/` folder in your prefered location and serve it with your favorite web server.
