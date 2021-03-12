@@ -19,7 +19,7 @@ in your own computer.
    ```console
     $ npm install 
    ```
-    1. Optionally and not necessary at all, you may also run the command below to build dpendencies.
+    1. Optionally and not necessary at all, you may also run the command below to build dependencies.
         ```console
           $ npm run-script build
         ```
